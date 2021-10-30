@@ -72,6 +72,7 @@ void OpenGLWindow::initializeGL() {
 
 void OpenGLWindow::restart() {
   m_gameData.m_state = State::Playing;
+  m_restartWaitTimer.restart();
   // m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 3);
@@ -83,10 +84,33 @@ void OpenGLWindow::update() {
 
   // Wait 5 seconds before restarting
 
-  if (m_gameData.m_state != State::Playing && m_restartWaitTimer.elapsed() > 5) {
+  if (m_gameData.m_state == State::Go && m_restartWaitTimer.elapsed() > 2) {
     restart();
-    m_restartWaitTimer.restart();
     return;
+  }
+
+  if (m_gameData.m_state == State::Ready && m_restartWaitTimer.elapsed() > 2) {
+    m_gameData.m_state = State::Go;
+    m_restartWaitTimer.restart();
+  }
+
+  if (m_gameData.m_state == State::GameOver || m_gameData.m_state == State::Win) {
+    if (m_restartWaitTimer.elapsed() > 4) {
+      m_gameData.m_state = State::Ready;
+      m_restartWaitTimer.restart();
+    }
+      
+    // if (m_restartWaitTimer.elapsed() > 6) {
+    //   m_gameData.m_state = State::Go;
+    //   // m_restartWaitTimer.restart();
+    //   if (m_restartWaitTimer.elapsed() > 8) {
+    //     m_gameData.m_state = State::Playing;
+    //     // m_restartWaitTimer.restart();
+    //   }
+    //   restart();
+    //   m_restartWaitTimer.restart();
+    //   return;
+    // }
   }
   
   m_ship.update(m_gameData, deltaTime);
@@ -131,6 +155,10 @@ void OpenGLWindow::paintUI() {
       ImGui::Text("Game Over!");
     } else if (m_gameData.m_state == State::Win) {
       ImGui::Text("*You Win!*");
+    } else if (m_gameData.m_state == State::Ready) {
+      ImGui::Text("*Ready?*");
+    } else if (m_gameData.m_state == State::Go) {
+      ImGui::Text("*Go!*");
     }
 
     ImGui::PopFont();

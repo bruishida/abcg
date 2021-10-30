@@ -20,10 +20,10 @@ void Ship::initializeGL(GLuint program) {
   m_velocity = glm::vec2(0);
   
 std::array<glm::vec2, 16> positions{
-      // Pato cabeca
-      glm::vec2{+6.0f, +12.0f}, 
+    // Pato cabeca
+    glm::vec2{+6.0f, +12.0f}, 
 	  glm::vec2{+10.0f, +8.0f},
-      glm::vec2{+6.0f, +4.0f}, 
+    glm::vec2{+6.0f, +4.0f}, 
 	  glm::vec2{+2.0f, +8.0f},
       
       // Bico
@@ -151,14 +151,14 @@ void Ship::update(const GameData &gameData, float deltaTime) {
   if (gameData.m_input[static_cast<size_t>(Input::Left)] &&
       gameData.m_state == State::Playing) {
     if (m_positionx > -0.5f)
-      m_positionx -= 0.01f;
+      m_positionx -= 0.001f;
     m_translation = glm::vec2(m_positionx,m_positiony);
     m_velocity -= forward * 0.5f * deltaTime;
   }
   if (gameData.m_input[static_cast<size_t>(Input::Right)] &&
       gameData.m_state == State::Playing) {
     if (m_positionx < 0.5f)
-      m_positionx += 0.01f;
+      m_positionx += 0.001f;
     m_translation = glm::vec2(m_positionx,m_positiony);
     m_velocity += forward * 0.5f * deltaTime;
   }
@@ -167,11 +167,13 @@ void Ship::update(const GameData &gameData, float deltaTime) {
   //m_jumpCoolDownTimer;
   if (gameData.m_input[static_cast<size_t>(Input::JumpUp)] &&
       gameData.m_state == State::Playing) {
-      m_positiony = 0.25f;
+      if (m_positiony < 0.5f)
+        m_positiony += 0.001f;
       m_translation = glm::vec2(m_positionx, m_positiony);
     } else if (gameData.m_input[static_cast<size_t>(Input::JumpDown)] &&
       gameData.m_state == State::Playing) {
-      m_positiony = 0.0f;
+      if (m_positiony > -0.5f)
+        m_positiony -= 0.001f;
       m_translation = glm::vec2(m_positionx, m_positiony);
     }
     // m_translation = glm::vec2(0);

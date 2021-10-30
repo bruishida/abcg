@@ -7,37 +7,38 @@
 void OpenGLWindow::handleEvent(SDL_Event &event) {
   // Keyboard events
   if (event.type == SDL_KEYDOWN) {
-    if (event.key.keysym.sym == SDLK_SPACE || event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w) {
+    if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w)
       m_gameData.m_input.set(static_cast<size_t>(Input::JumpUp));
+    if (event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s)
       m_gameData.m_input.set(static_cast<size_t>(Input::JumpDown));
-    }
     if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a)
       m_gameData.m_input.set(static_cast<size_t>(Input::Left));
     if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d)
       m_gameData.m_input.set(static_cast<size_t>(Input::Right));
   }
   if (event.type == SDL_KEYUP) {
-    if (event.key.keysym.sym == SDLK_SPACE || event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w)
+    if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w)
       m_gameData.m_input.reset(static_cast<size_t>(Input::JumpUp));
+    if (event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s)
+      m_gameData.m_input.reset(static_cast<size_t>(Input::JumpDown));
     if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a)
       m_gameData.m_input.reset(static_cast<size_t>(Input::Left));
     if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d)
       m_gameData.m_input.reset(static_cast<size_t>(Input::Right));
   }
 
-  // Mouse events
-  if (event.type == SDL_MOUSEBUTTONDOWN) {
-    if (event.button.button == SDL_BUTTON_LEFT) {
-      m_gameData.m_input.set(static_cast<size_t>(Input::JumpUp));
-      m_gameData.m_input.set(static_cast<size_t>(Input::JumpDown));
-    }
+//   // Mouse events
+//   if (event.type == SDL_MOUSEBUTTONDOWN) {
+//     if (event.button.button == SDL_BUTTON_LEFT) {
+//       m_gameData.m_input.set(static_cast<size_t>(Input::JumpUp));
+//     }
       
-  }
-  if (event.type == SDL_MOUSEBUTTONUP) {
-    if (event.button.button == SDL_BUTTON_LEFT){
-      m_gameData.m_input.reset(static_cast<size_t>(Input::JumpUp));
-    }
-  }
+//   }
+//   if (event.type == SDL_MOUSEBUTTONUP) {
+//     if (event.button.button == SDL_BUTTON_LEFT){
+//       m_gameData.m_input.reset(static_cast<size_t>(Input::JumpUp));
+//     }
+//   }
 }
 
 void OpenGLWindow::initializeGL() {
@@ -49,14 +50,14 @@ void OpenGLWindow::initializeGL() {
   //   throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   // }
 
-  // // Create program to render the stars
+  // Create program to render the stars
   // m_starsProgram = createProgramFromFile(getAssetsPath() + "stars.vert",
   //                                        getAssetsPath() + "stars.frag");
   // Create program to render the other objects
   m_objectsProgram = createProgramFromFile(getAssetsPath() + "objects.vert",
                                            getAssetsPath() + "objects.frag");
 
-  abcg::glClearColor(0, 0, 0, 1);
+  abcg::glClearColor(0.3, 0.5, 1, 1);
 
 #if !defined(__EMSCRIPTEN__)
   abcg::glEnable(GL_PROGRAM_POINT_SIZE);
@@ -74,7 +75,7 @@ void OpenGLWindow::restart() {
 
   // m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
-  // m_asteroids.initializeGL(m_objectsProgram, 3);
+  m_asteroids.initializeGL(m_objectsProgram, 3);
   m_bullets.initializeGL(m_objectsProgram);
 }
 
@@ -89,8 +90,8 @@ void OpenGLWindow::update() {
   }
 
   m_ship.update(m_gameData, deltaTime);
-  m_starLayers.update(m_ship, deltaTime);
-  // m_asteroids.update(m_ship, deltaTime);
+  // m_starLayers.update(m_ship, deltaTime);
+  m_asteroids.update(m_ship, deltaTime);
   m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
@@ -108,7 +109,7 @@ void OpenGLWindow::paintGL() {
   abcg::glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
   m_starLayers.paintGL();
-  // m_asteroids.paintGL();
+  m_asteroids.paintGL();
   m_bullets.paintGL();
   m_ship.paintGL(m_gameData);
 }
@@ -150,24 +151,24 @@ void OpenGLWindow::terminateGL() {
   abcg::glDeleteProgram(m_starsProgram);
   abcg::glDeleteProgram(m_objectsProgram);
 
-  // m_asteroids.terminateGL();
+  m_asteroids.terminateGL();
   m_bullets.terminateGL();
   m_ship.terminateGL();
-  m_starLayers.terminateGL();
+  // m_starLayers.terminateGL();
 }
 
 void OpenGLWindow::checkCollisions() {
-  // // Check collision between ship and asteroids
-  // for (const auto &asteroid : m_asteroids.m_asteroids) {
-  //   const auto asteroidTranslation{asteroid.m_translation};
-  //   const auto distance{
-  //       glm::distance(m_ship.m_translation, asteroidTranslation)};
+//   // Check collision between ship and asteroids
+//   for (const auto &asteroid : m_asteroids.m_asteroids) {
+//     const auto asteroidTranslation{asteroid.m_translation};
+//     const auto distance{
+//         glm::distance(m_ship.m_translation, asteroidTranslation)};
 
-  //   if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 0.85f) {
-  //     m_gameData.m_state = State::GameOver;
-  //     m_restartWaitTimer.restart();
-  //   }
-  // }
+//     if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 0.85f) {
+//       m_gameData.m_state = State::GameOver;
+//       m_restartWaitTimer.restart();
+//     }
+//   }
 
   // // Check collision between bullets and asteroids
   // for (auto &bullet : m_bullets.m_bullets) {
@@ -209,9 +210,9 @@ void OpenGLWindow::checkCollisions() {
   // }
 }
 
-void OpenGLWindow::checkWinCondition() {
-  /*if (m_asteroids.m_asteroids.empty()) {
-    m_gameData.m_state = State::Win;
-    m_restartWaitTimer.restart();
-  }*/
-}
+// void OpenGLWindow::checkWinCondition() {
+//   if (sizeof(m_asteroids) > 10) {
+//     m_gameData.m_state = State::Win;
+//     m_restartWaitTimer.restart();
+//   }
+// }

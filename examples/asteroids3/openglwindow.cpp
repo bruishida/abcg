@@ -43,12 +43,12 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
 
 void OpenGLWindow::initializeGL() {
   // Load a new font
-  // ImGuiIO &io{ImGui::GetIO()};
-  // const auto filename{getAssetsPath() + "Inconsolata-Medium.ttf"};
-  // m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 60.0f);
-  // if (m_font == nullptr) {
-  //   throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
-  // }
+  ImGuiIO &io{ImGui::GetIO()};
+  const auto filename{getAssetsPath() + "Inconsolata-Medium.ttf"};
+  m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 60.0f);
+  if (m_font == nullptr) {
+    throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
+  }
 
   // Create program to render the stars
   // m_starsProgram = createProgramFromFile(getAssetsPath() + "stars.vert",
@@ -72,7 +72,6 @@ void OpenGLWindow::initializeGL() {
 
 void OpenGLWindow::restart() {
   m_gameData.m_state = State::Playing;
-
   // m_starLayers.initializeGL(m_starsProgram, 25);
   m_ship.initializeGL(m_objectsProgram);
   m_asteroids.initializeGL(m_objectsProgram, 3);
@@ -83,22 +82,21 @@ void OpenGLWindow::update() {
   const float deltaTime{static_cast<float>(getDeltaTime())};
 
   // Wait 5 seconds before restarting
-  if (m_gameData.m_state != State::Playing &&
-      m_restartWaitTimer.elapsed() > 5) {
+
+  if (m_gameData.m_state != State::Playing && m_restartWaitTimer.elapsed() > 5) {
     restart();
+    m_restartWaitTimer.restart();
     return;
   }
-
+  
   m_ship.update(m_gameData, deltaTime);
   // m_starLayers.update(m_ship, deltaTime);
   m_asteroids.update(m_ship, deltaTime);
   m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
-    // checkCollisions();
-    // checkWinCondition();
-
-    // restart();
+    checkCollisions();
+    checkWinCondition();
   }
 }
 
@@ -158,17 +156,17 @@ void OpenGLWindow::terminateGL() {
 }
 
 void OpenGLWindow::checkCollisions() {
-//   // Check collision between ship and asteroids
-//   for (const auto &asteroid : m_asteroids.m_asteroids) {
-//     const auto asteroidTranslation{asteroid.m_translation};
-//     const auto distance{
-//         glm::distance(m_ship.m_translation, asteroidTranslation)};
+  // Check collision between ship and asteroids
+  for (const auto &asteroid : m_asteroids.m_asteroids) {
+    const auto asteroidTranslation{asteroid.m_translation};
+    const auto distance{
+        glm::distance(m_ship.m_translation, asteroidTranslation)};
 
-//     if (distance < m_ship.m_scale * 0.9f + asteroid.m_scale * 0.85f) {
-//       m_gameData.m_state = State::GameOver;
-//       m_restartWaitTimer.restart();
-//     }
-//   }
+    if (distance < m_ship.m_scale * 0.6f + asteroid.m_scale * 0.5f) {
+      m_gameData.m_state = State::GameOver;
+      m_restartWaitTimer.restart();
+    }
+  }
 
   // // Check collision between bullets and asteroids
   // for (auto &bullet : m_bullets.m_bullets) {
@@ -210,9 +208,9 @@ void OpenGLWindow::checkCollisions() {
   // }
 }
 
-// void OpenGLWindow::checkWinCondition() {
-//   if (sizeof(m_asteroids) > 10) {
-//     m_gameData.m_state = State::Win;
-//     m_restartWaitTimer.restart();
-//   }
-// }
+void OpenGLWindow::checkWinCondition() {
+  if (m_restartWaitTimer.elapsed() > 10) {
+    m_gameData.m_state = State::Win;
+    m_restartWaitTimer.restart();
+  }
+}

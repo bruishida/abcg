@@ -153,14 +153,13 @@ void Ship::update(const GameData &gameData, float deltaTime) {
     if (m_positionx > -0.5f)
       m_positionx -= 0.001f;
     m_translation = glm::vec2(m_positionx,m_positiony);
-    m_velocity -= forward * 0.5f * deltaTime;
+    // m_velocity -= forward * 0.5f * deltaTime;
   }
   if (gameData.m_input[static_cast<size_t>(Input::Right)] &&
       gameData.m_state == State::Playing) {
     if (m_positionx < 0.5f)
       m_positionx += 0.001f;
     m_translation = glm::vec2(m_positionx,m_positiony);
-    m_velocity += forward * 0.5f * deltaTime;
   }
 
   // Apply thrust
@@ -176,5 +175,7 @@ void Ship::update(const GameData &gameData, float deltaTime) {
         m_positiony -= 0.001f;
       m_translation = glm::vec2(m_positionx, m_positiony);
     }
+
+     m_velocity += 0.25f * deltaTime;
     // m_translation = glm::vec2(0);
 }

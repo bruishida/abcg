@@ -1,14 +1,14 @@
 # Duck and Cover
 
 ## Indice:
-- [Autoria](##Autoria)
-- [Como jogar](##Como_jogar)
-- [Objetivo do jogo](##Objetivo_do_jogo)
-- [Sobre a implementação](##Sobre_a_implementação)
-- [Classes](##Classes)
-- [Inspiração](##Inspiração)
-- [Créditos pelo ABCg](##Créditos_pelo_ABCg)
-- [Licença](##Licença)
+- [Autoria](##_Autoria)
+- [Como jogar](##_Como_jogar)
+- [Objetivo do jogo](##_Objetivo_do_jogo)
+- [Sobre a implementação](##_Sobre_a_implementação)
+- [Classes](##_Classes)
+- [Inspiração](##_Inspiração)
+- [Créditos pelo ABCg](##_Créditos_pelo_ABCg)
+- [Licença](##_Licença)
 
 ---
 

@@ -1,6 +1,14 @@
-# Jogo do Pato
+# Duck and Cover
 
-[TOC]
+## Indice:
+- [Autoria](##Autoria)
+- [Como jogar](##Como_jogar)
+- [Objetivo do jogo](##Objetivo_do_jogo)
+- [Sobre a implementação](##Sobre_a_implementação)
+- [Classes](##Classes)
+- [Inspiração](##Inspiração)
+- [Créditos pelo ABCg](##Créditos_pelo_ABCg)
+- [Licença](##Licença)
 
 ---
 

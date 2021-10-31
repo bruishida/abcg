@@ -1,5 +1,5 @@
-#ifndef SHIP_HPP_
-#define SHIP_HPP_
+#ifndef DUCK_HPP_
+#define DUCK_HPP_
 
 #include "abcg.hpp"
 #include "gamedata.hpp"
@@ -8,7 +8,7 @@ class Asteroids;
 class OpenGLWindow;
 class StarLayers;
 
-class Ship {
+class Duck {
  public:
   void initializeGL(GLuint program);
   void paintGL(const GameData &gameData);

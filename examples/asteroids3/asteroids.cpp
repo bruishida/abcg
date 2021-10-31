@@ -24,7 +24,7 @@ void Asteroids::initializeGL(GLuint program, int quantity) {
   for (auto &asteroid : m_asteroids) {
     asteroid = createAsteroid();
 
-    // Make sure the asteroid won't collide with the ship
+    // Make sure the asteroid won't collide with the duck
 
     do {
       asteroid.m_translation = {m_randomDist(m_randomEngine),
@@ -65,7 +65,7 @@ void Asteroids::terminateGL() {
   }
 }
 
-void Asteroids::update(const Ship &ship, float deltaTime) {
+void Asteroids::update(const Duck &duck, float deltaTime) {
   auto &re{m_randomEngine};
 
   for (auto &asteroid : m_asteroids) {
@@ -75,7 +75,7 @@ void Asteroids::update(const Ship &ship, float deltaTime) {
       // glm::vec2 left{glm::vec2{1.0f, 0.0f}};
       //asteroid.m_translation.x += 0.25f;
       //asteroid.m_translation.y += 0.25f;
-      asteroid.m_translation.y -= (ship.m_velocity * deltaTime).y;
+      asteroid.m_translation.y -= (duck.m_velocity * deltaTime).y;
       float valor = (asteroid.m_translation).x + (asteroid.m_translation).y ;
       //  asteroid.m_translation.y -= valor ;
       asteroid.m_translation.x -= 0.000001f;

@@ -4,7 +4,7 @@
 #include "abcg.hpp"
 #include "gamedata.hpp"
 
-class Asteroids;
+class Bombs;
 class OpenGLWindow;
 class StarLayers;
 
@@ -18,7 +18,7 @@ class Duck {
   void setRotation(float rotation) { m_rotation = rotation; }
 
  private:
-  friend Asteroids;
+  friend Bombs;
   friend OpenGLWindow;
   friend StarLayers;
 

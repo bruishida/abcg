@@ -58,7 +58,7 @@ void OpenGLWindow::restart() {
   m_gameData.m_state = State::Playing;
   m_restartWaitTimer.restart();
   m_duck.initializeGL(m_objectsProgram);
-  m_asteroids.initializeGL(m_objectsProgram, 3);
+  m_bombs.initializeGL(m_objectsProgram, 3);
 }
 
 void OpenGLWindow::update() {
@@ -84,7 +84,7 @@ void OpenGLWindow::update() {
   }
   
   m_duck.update(m_gameData, deltaTime);
-  m_asteroids.update(m_duck, deltaTime);
+  m_bombs.update(m_duck, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
     checkCollisions();
@@ -98,7 +98,7 @@ void OpenGLWindow::paintGL() {
   abcg::glClear(GL_COLOR_BUFFER_BIT);
   abcg::glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
-  m_asteroids.paintGL();
+  m_bombs.paintGL();
   m_duck.paintGL(m_gameData);
 }
 
@@ -142,18 +142,18 @@ void OpenGLWindow::resizeGL(int width, int height) {
 void OpenGLWindow::terminateGL() {
     abcg::glDeleteProgram(m_objectsProgram);
 
-  m_asteroids.terminateGL();
+  m_bombs.terminateGL();
   m_duck.terminateGL();
 }
 
 void OpenGLWindow::checkCollisions() {
   // Check collision between duck and asteroids
-  for (const auto &asteroid : m_asteroids.m_asteroids) {
-    const auto asteroidTranslation{asteroid.m_translation};
+  for (const auto &bomb : m_bombs.m_bombs) {
+    const auto bombTranslation{bomb.m_translation};
     const auto distance{
-        glm::distance(m_duck.m_translation, asteroidTranslation)};
+        glm::distance(m_duck.m_translation, bombTranslation)};
 
-    if (distance < m_duck.m_scale * 0.6f + asteroid.m_scale * 0.5f) {
+    if (distance < m_duck.m_scale * 0.6f + bomb.m_scale * 0.5f) {
       m_gameData.m_state = State::GameOver;
       m_restartWaitTimer.restart();
     }

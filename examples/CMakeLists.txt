@@ -1,3 +1,3 @@
 add_subdirectory(helloworld)
 add_subdirectory(asteroids4)
-add_subdirectory(asteroids3)
+add_subdirectory(duckandcover)

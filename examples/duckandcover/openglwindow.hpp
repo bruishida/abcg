@@ -6,7 +6,7 @@
 #include <random>
 
 #include "abcg.hpp"
-#include "asteroids.hpp"
+#include "bombs.hpp"
 #include "duck.hpp"
 
 class OpenGLWindow : public abcg::OpenGLWindow {
@@ -26,7 +26,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   GameData m_gameData;
 
-  Asteroids m_asteroids;
+  Bombs m_bombs;
   Duck m_duck;
   
   abcg::ElapsedTimer m_restartWaitTimer;

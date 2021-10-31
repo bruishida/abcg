@@ -122,9 +122,9 @@ void OpenGLWindow::paintUI() {
     } else if (m_gameData.m_state == State::Win) {
       ImGui::Text("*You Win!*");
     } else if (m_gameData.m_state == State::Ready) {
-      ImGui::Text("*Ready?*");
+      ImGui::Text(" *Ready?* ");
     } else if (m_gameData.m_state == State::Go) {
-      ImGui::Text("*Go!*");
+      ImGui::Text("   *Go!*   ");
     }
 
     ImGui::PopFont();

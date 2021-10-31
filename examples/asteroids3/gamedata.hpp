@@ -3,12 +3,12 @@
 
 #include <bitset>
 
-enum class Input { Right, Left, JumpUp, JumpDown, Fire };
+enum class Input { Right, Left, JumpUp, JumpDown };
 enum class State { Playing, GameOver, Win, Ready, Go };
 
 struct GameData {
-  State m_state{State::Playing};
-  std::bitset<5> m_input;  // [jumpup, jumpdown, left, right, fire]
+  State m_state{State::Ready};
+  std::bitset<4> m_input;  // [jumpup, jumpdown, left, right]
 };
 
 #endif

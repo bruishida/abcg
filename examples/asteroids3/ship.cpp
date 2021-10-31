@@ -21,28 +21,50 @@ void Ship::initializeGL(GLuint program) {
   
  // clang-format off
   std::array<glm::vec2, 24> positions{
-      // Ship body
-      glm::vec2{-02.5f, +12.5f}, glm::vec2{-15.5f, +02.5f},
-      glm::vec2{-15.5f, -12.5f}, glm::vec2{-09.5f, -07.5f},
-      glm::vec2{-03.5f, -12.5f}, glm::vec2{+03.5f, -12.5f},
-      glm::vec2{+09.5f, -07.5f}, glm::vec2{+15.5f, -12.5f},
-      glm::vec2{+15.5f, +02.5f}, glm::vec2{+02.5f, +12.5f},
-      };
+      // Pato cabeca
+    glm::vec2{+6.0f, +12.0f}, 
+	  glm::vec2{+10.0f, +8.0f},
+    glm::vec2{+6.0f, +4.0f}, 
+	  glm::vec2{+2.0f, +8.0f},
+
+      // Bico
+	  glm::vec2{+10.0f, +8.0f},
+	  glm::vec2{+14.0f, +4.0f},
+
+	  // Pescoco
+	  glm::vec2{+8.0f, +2.0f},
+	  glm::vec2{+8.0f, -4.0f}, 
+	  glm::vec2{+2.0f, +2.0f},
+
+	  // Peito
+	  glm::vec2{+2.0f, -10.0f},
+
+	  // Asa
+	  glm::vec2{-10.0f, -10.0f},
+
+	  // Rabo
+	  glm::vec2{-6.0f, -6.0f},
+	  glm::vec2{-14.0f, +2.0f},
+
+	  // Pata
+	  glm::vec2{-2.0f, -10.0f},
+	  glm::vec2{+2.0f, -12.0f}, 
+	  glm::vec2{-6.0f, -12.0f},  };
 
   // Normalize
   for (auto &position : positions) {
     position /= glm::vec2{15.5f, 15.5f};
   }
 
-  const std::array indices{0, 1, 3,
-                           1, 2, 3,
-                           0, 3, 4,
-                           0, 4, 5,
-                           9, 0, 5,
-                           9, 5, 6,
-                           9, 6, 8,
-                           8, 6, 7,
-                           // Cannons
+  const std::array indices{0, 1, 2,
+                           0, 2, 3,
+                           2, 4, 5,
+                           3, 6, 8,
+                           6, 7, 8,
+                           7, 8, 9,
+                           8, 9, 10,
+                           8, 11, 12,
+                           13, 14, 15,
                            10, 11, 12,
                            10, 12, 13,
                            14, 15, 16,
@@ -97,20 +119,20 @@ void Ship::paintGL(const GameData &gameData) {
   // Restart thruster blink timer every 100 ms
   if (m_trailBlinkTimer.elapsed() > 100.0 / 1000.0) m_trailBlinkTimer.restart();
 
-  if (gameData.m_input[static_cast<size_t>(Input::JumpUp)]) {
-    // Show thruster trail during 50 ms
-    if (m_trailBlinkTimer.elapsed() < 50.0 / 1000.0) {
-      abcg::glEnable(GL_BLEND);
-      abcg::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  // if (gameData.m_input[static_cast<size_t>(Input::JumpUp)]) {
+  //   // Show thruster trail during 50 ms
+  //   if (m_trailBlinkTimer.elapsed() < 50.0 / 1000.0) {
+  //     abcg::glEnable(GL_BLEND);
+  //     abcg::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      // 50% transparent
-      abcg::glUniform4f(m_colorLoc, 1, 1, 1, 0.5f);
+  //     // 50% transparent
+  //     abcg::glUniform4f(m_colorLoc, 1, 1, 1, 0.5f);
 
-      abcg::glDrawElements(GL_TRIANGLES, 14 * 3, GL_UNSIGNED_INT, nullptr);
+  //     abcg::glDrawElements(GL_TRIANGLES, 14 * 3, GL_UNSIGNED_INT, nullptr);
 
-      abcg::glDisable(GL_BLEND);
-    }
-  }
+  //     abcg::glDisable(GL_BLEND);
+  //   }
+  // }
 
   abcg::glUniform4fv(m_colorLoc, 1, &m_color.r);
   abcg::glDrawElements(GL_TRIANGLES, 12 * 3, GL_UNSIGNED_INT, nullptr);
@@ -132,13 +154,13 @@ void Ship::update(const GameData &gameData, float deltaTime) {
   if (gameData.m_input[static_cast<size_t>(Input::Left)] &&
       gameData.m_state == State::Playing) {
     if (m_positionx > -0.5f)
-      m_positionx -= 0.001f;
+      m_positionx -= 0.01f;
     m_translation = glm::vec2(m_positionx,m_positiony);
   }
   if (gameData.m_input[static_cast<size_t>(Input::Right)] &&
       gameData.m_state == State::Playing) {
     if (m_positionx < 0.5f)
-      m_positionx += 0.001f;
+      m_positionx += 0.01f;
     m_translation = glm::vec2(m_positionx,m_positiony);
   }
 
@@ -146,12 +168,12 @@ void Ship::update(const GameData &gameData, float deltaTime) {
   if (gameData.m_input[static_cast<size_t>(Input::JumpUp)] &&
       gameData.m_state == State::Playing) {
       if (m_positiony < 0.5f)
-        m_positiony += 0.001f;
+        m_positiony += 0.01f;
       m_translation = glm::vec2(m_positionx, m_positiony);
     } else if (gameData.m_input[static_cast<size_t>(Input::JumpDown)] &&
       gameData.m_state == State::Playing) {
       if (m_positiony > -0.5f)
-        m_positiony -= 0.001f;
+        m_positiony -= 0.01f;
       m_translation = glm::vec2(m_positionx, m_positiony);
     }
 

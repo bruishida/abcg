@@ -5,7 +5,6 @@
 #include "gamedata.hpp"
 
 class Asteroids;
-class Bullets;
 class OpenGLWindow;
 class StarLayers;
 
@@ -20,7 +19,6 @@ class Ship {
 
  private:
   friend Asteroids;
-  friend Bullets;
   friend OpenGLWindow;
   friend StarLayers;
 
@@ -43,8 +41,6 @@ class Ship {
   glm::vec2 m_velocity{glm::vec2(0)};
 
   abcg::ElapsedTimer m_trailBlinkTimer;
-  abcg::ElapsedTimer m_bulletCoolDownTimer;
-  abcg::ElapsedTimer m_jumpCoolDownTimer;
 };
 
 #endif

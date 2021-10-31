@@ -19,53 +19,34 @@ void Ship::initializeGL(GLuint program) {
   m_positiony = 0.0f;
   m_velocity = glm::vec2(0);
   
-std::array<glm::vec2, 16> positions{
-    // Pato cabeca
-    glm::vec2{+6.0f, +12.0f}, 
-	  glm::vec2{+10.0f, +8.0f},
-    glm::vec2{+6.0f, +4.0f}, 
-	  glm::vec2{+2.0f, +8.0f},
-      
-      // Bico
-	  glm::vec2{+10.0f, +8.0f},
-	  glm::vec2{+14.0f, +4.0f},
-      	  
-	  // Pescoco
-	  glm::vec2{+8.0f, +2.0f},
-	  glm::vec2{+8.0f, -4.0f}, 
-	  glm::vec2{+2.0f, +2.0f},
-	  
-	  // Peito
-	  glm::vec2{+2.0f, -10.0f},
-	  
-	  // Asa
-	  glm::vec2{-10.0f, -10.0f},
-	  
-	  // Rabo
-	  glm::vec2{-6.0f, -6.0f},
-	  glm::vec2{-14.0f, +2.0f},
-	  
-	  // Pata
-	  glm::vec2{-2.0f, -10.0f},
-	  glm::vec2{+2.0f, -12.0f}, 
-	  glm::vec2{-6.0f, -12.0f},
-	  
-};
+ // clang-format off
+  std::array<glm::vec2, 24> positions{
+      // Ship body
+      glm::vec2{-02.5f, +12.5f}, glm::vec2{-15.5f, +02.5f},
+      glm::vec2{-15.5f, -12.5f}, glm::vec2{-09.5f, -07.5f},
+      glm::vec2{-03.5f, -12.5f}, glm::vec2{+03.5f, -12.5f},
+      glm::vec2{+09.5f, -07.5f}, glm::vec2{+15.5f, -12.5f},
+      glm::vec2{+15.5f, +02.5f}, glm::vec2{+02.5f, +12.5f},
+      };
+
   // Normalize
   for (auto &position : positions) {
     position /= glm::vec2{15.5f, 15.5f};
   }
 
-  const std::array indices{0, 1, 2,
-                           0, 2, 3,
-                           2, 4, 5,
-                           3, 6, 8,
-                           6, 7, 8,
-                           7, 8, 9,
-                           8, 9, 10,
-                           8, 11, 12,
-                           13, 14, 15
-                           };
+  const std::array indices{0, 1, 3,
+                           1, 2, 3,
+                           0, 3, 4,
+                           0, 4, 5,
+                           9, 0, 5,
+                           9, 5, 6,
+                           9, 6, 8,
+                           8, 6, 7,
+                           // Cannons
+                           10, 11, 12,
+                           10, 12, 13,
+                           14, 15, 16,
+                           14, 16, 17};
 
   // Generate VBO
   abcg::glGenBuffers(1, &m_vbo);
@@ -153,7 +134,6 @@ void Ship::update(const GameData &gameData, float deltaTime) {
     if (m_positionx > -0.5f)
       m_positionx -= 0.001f;
     m_translation = glm::vec2(m_positionx,m_positiony);
-    // m_velocity -= forward * 0.5f * deltaTime;
   }
   if (gameData.m_input[static_cast<size_t>(Input::Right)] &&
       gameData.m_state == State::Playing) {
@@ -163,7 +143,6 @@ void Ship::update(const GameData &gameData, float deltaTime) {
   }
 
   // Apply thrust
-  //m_jumpCoolDownTimer;
   if (gameData.m_input[static_cast<size_t>(Input::JumpUp)] &&
       gameData.m_state == State::Playing) {
       if (m_positiony < 0.5f)
@@ -177,5 +156,4 @@ void Ship::update(const GameData &gameData, float deltaTime) {
     }
 
      m_velocity += 0.25f * deltaTime;
-    // m_translation = glm::vec2(0);
 }

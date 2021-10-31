@@ -1,8 +1,6 @@
 # Jogo do Pato
 
-<p align="center">
- <a href="## Autoria">Autoria</a> • <a href="## Como jogar">Como jogar</a> • <a href="## Objetivo do jogo">Objetivo do jogo</a> •  <a href="## Sobre a implementação">Sobre a implementação</a> •  <a href="### Classes ">Classes</a> • <a href="### Inspiração">Inspiração</a> • <a href="### Créditos pelo ABCg">Créditos pelo ABCg</a> •  <a href="### Licença">Licença</a>
-</p>
+[TOCM]
 
 ---
 

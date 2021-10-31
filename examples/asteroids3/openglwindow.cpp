@@ -37,10 +37,7 @@ void OpenGLWindow::initializeGL() {
   if (m_font == nullptr) {
     throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
   }
-
-  // Create program to render the stars
-  // m_starsProgram = createProgramFromFile(getAssetsPath() + "stars.vert",
-  //                                        getAssetsPath() + "stars.frag");
+  
   // Create program to render the other objects
   m_objectsProgram = createProgramFromFile(getAssetsPath() + "objects.vert",
                                            getAssetsPath() + "objects.frag");
@@ -51,7 +48,6 @@ void OpenGLWindow::initializeGL() {
   abcg::glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 
-  // Start pseudo-random number generator
   m_randomEngine.seed(
       std::chrono::steady_clock::now().time_since_epoch().count());
 
@@ -102,7 +98,6 @@ void OpenGLWindow::paintGL() {
   abcg::glClear(GL_COLOR_BUFFER_BIT);
   abcg::glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
-  m_starLayers.paintGL();
   m_asteroids.paintGL();
   m_duck.paintGL(m_gameData);
 }
@@ -145,8 +140,7 @@ void OpenGLWindow::resizeGL(int width, int height) {
 }
 
 void OpenGLWindow::terminateGL() {
-  abcg::glDeleteProgram(m_starsProgram);
-  abcg::glDeleteProgram(m_objectsProgram);
+    abcg::glDeleteProgram(m_objectsProgram);
 
   m_asteroids.terminateGL();
   m_duck.terminateGL();

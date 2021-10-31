@@ -8,7 +8,6 @@
 #include "abcg.hpp"
 #include "asteroids.hpp"
 #include "duck.hpp"
-#include "starlayers.hpp"
 
 class OpenGLWindow : public abcg::OpenGLWindow {
  protected:
@@ -20,7 +19,6 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   void terminateGL() override;
 
  private:
-  GLuint m_starsProgram{};
   GLuint m_objectsProgram{};
 
   int m_viewportWidth{};
@@ -30,8 +28,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   Asteroids m_asteroids;
   Duck m_duck;
-  StarLayers m_starLayers;
-
+  
   abcg::ElapsedTimer m_restartWaitTimer;
 
   ImFont* m_font{};

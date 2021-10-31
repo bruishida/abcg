@@ -1,6 +1,6 @@
 # Jogo do Pato
 
-[TOCM]
+[TOC]
 
 ---
 

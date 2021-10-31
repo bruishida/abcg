@@ -1,6 +1,6 @@
 # Jogo do Pato
 
-[[_TOC_]]
+[TOC]
 
 ---
 

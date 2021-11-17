@@ -1,3 +1,5 @@
 add_subdirectory(helloworld)
 add_subdirectory(asteroids4)
 add_subdirectory(duckandcover)
+add_subdirectory(viewer1)
+add_subdirectory(polybius)

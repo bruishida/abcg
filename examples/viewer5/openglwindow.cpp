@@ -49,7 +49,7 @@ void OpenGLWindow::initializeGL() {
   }
 
   // Load default model
-  loadModel(getAssetsPath() + "roman_lamp.obj");
+  loadModel(getAssetsPath() + "planet.obj");
   m_mappingMode = 3;  // "From mesh" option
 
   // Initial trackball spin

@@ -32,6 +32,8 @@ void OpenGLWindow::handleEvent(SDL_Event& ev) {
       m_panSpeed = 1.0f;
     if (ev.key.keysym.sym == SDLK_q) m_truckSpeed = -1.0f;
     if (ev.key.keysym.sym == SDLK_e) m_truckSpeed = 1.0f;
+    if (ev.key.keysym.sym == SDLK_k) m_planeSpeed = -1.0f;
+    if (ev.key.keysym.sym == SDLK_i) m_planeSpeed = 1.0f;
   }
   if (ev.type == SDL_KEYUP) {
     if ((ev.key.keysym.sym == SDLK_UP || ev.key.keysym.sym == SDLK_w) &&
@@ -46,8 +48,10 @@ void OpenGLWindow::handleEvent(SDL_Event& ev) {
     if ((ev.key.keysym.sym == SDLK_RIGHT || ev.key.keysym.sym == SDLK_d) &&
         m_panSpeed > 0)
       m_panSpeed = 0.0f;
-    if (ev.key.keysym.sym == SDLK_q && m_truckSpeed < 0) m_truckSpeed = 0.0f;
-    if (ev.key.keysym.sym == SDLK_e && m_truckSpeed > 0) m_truckSpeed = 0.0f;
+    if (ev.key.keysym.sym == SDLK_k && m_truckSpeed < 0) m_truckSpeed = 0.0f;
+    if (ev.key.keysym.sym == SDLK_i && m_truckSpeed > 0) m_truckSpeed = 0.0f;
+    if (ev.key.keysym.sym == SDLK_k && m_planeSpeed < 0) m_planeSpeed = 0.0f;
+    if (ev.key.keysym.sym == SDLK_i && m_planeSpeed > 0) m_planeSpeed = 0.0f;
   }
 }
 
@@ -64,7 +68,7 @@ void OpenGLWindow::initializeGL() {
   m_ground.initializeGL(m_program);
 
   // Load model
-  loadModelFromFile(getAssetsPath() + "bunny.obj");
+  loadModelFromFile(getAssetsPath() + "Kitchen.obj");
 
   // Generate VBO
   abcg::glGenBuffers(1, &m_VBO);
@@ -185,46 +189,46 @@ void OpenGLWindow::paintGL() {
 
   abcg::glBindVertexArray(m_VAO);
 
-  // Draw white bunny
+  // // Draw white bunny
   glm::mat4 model{1.0f};
   model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 0.0f));
   model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0, 1, 0));
-  model = glm::scale(model, glm::vec3(0.5f));
+  model = glm::scale(model, glm::vec3(0.05f));
 
   abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
   abcg::glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
   abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
                        nullptr);
 
-  // Draw yellow bunny
-  model = glm::mat4(1.0);
-  model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
-  model = glm::scale(model, glm::vec3(0.5f));
+  // // Draw yellow bunny
+  // model = glm::mat4(1.0);
+  // model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
+  // model = glm::scale(model, glm::vec3(0.5f));
 
-  abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
-  abcg::glUniform4f(colorLoc, 1.0f, 0.8f, 0.0f, 1.0f);
-  abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
-                       nullptr);
+  // abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+  // abcg::glUniform4f(colorLoc, 1.0f, 0.8f, 0.0f, 1.0f);
+  // abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
+  //                      nullptr);
 
-  // Draw blue bunny
-  model = glm::mat4(1.0);
-  model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
-  model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0, 1, 0));
-  model = glm::scale(model, glm::vec3(0.5f));
+  // // Draw blue bunny
+  // model = glm::mat4(1.0);
+  // model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
+  // model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0, 1, 0));
+  // model = glm::scale(model, glm::vec3(0.5f));
 
-  abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
-  abcg::glUniform4f(colorLoc, 0.0f, 0.8f, 1.0f, 1.0f);
-  abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
-                       nullptr);
+  // abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+  // abcg::glUniform4f(colorLoc, 0.0f, 0.8f, 1.0f, 1.0f);
+  // abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
+  //                      nullptr);
 
   // Draw red bunny
-  model = glm::mat4(1.0);
-  model = glm::scale(model, glm::vec3(0.1f));
+  // model = glm::mat4(1.0);
+  // model = glm::scale(model, glm::vec3(0.1f));
 
-  abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
-  abcg::glUniform4f(colorLoc, 1.0f, 0.25f, 0.25f, 1.0f);
-  abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
-                       nullptr);
+  // abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+  // abcg::glUniform4f(colorLoc, 1.0f, 0.25f, 0.25f, 1.0f);
+  // abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
+  //                      nullptr);
 
   abcg::glBindVertexArray(0);
 
@@ -259,4 +263,5 @@ void OpenGLWindow::update() {
   m_camera.dolly(m_dollySpeed * deltaTime);
   m_camera.truck(m_truckSpeed * deltaTime);
   m_camera.pan(m_panSpeed * deltaTime);
+  m_camera.plane(m_planeSpeed * deltaTime);
 }

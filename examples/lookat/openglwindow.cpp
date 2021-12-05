@@ -12,6 +12,8 @@
 
 #include "imfilebrowser.h"
 
+#include <string> 
+
 // Explicit specialization of std::hash for Vertex
 namespace std {
 template <>
@@ -80,9 +82,9 @@ void OpenGLWindow::initializeGL() {
   m_model_moon.setupVAO(m_program);
   m_trianglesToDraw_moon = m_model_moon.getNumTriangles();
 
-  m_Ka_moon = m_model_moon.getKa();
-  m_Kd_moon = m_model_moon.getKd();
-  m_Ks_moon = m_model_moon.getKs();
+  m_Ka = m_model_moon.getKa();
+  m_Kd = m_model_moon.getKd();
+  m_Ks = m_model_moon.getKs();
   m_shininess = 13.0f;
 
 
@@ -95,9 +97,9 @@ void OpenGLWindow::initializeGL() {
   m_model_earth.setupVAO(m_program);
   m_trianglesToDraw_earth = m_model_earth.getNumTriangles();
 
-  m_Ka_earth = m_model_earth.getKa();
-  m_Kd_earth = m_model_earth.getKd();
-  m_Ks_earth = m_model_earth.getKs();
+  // m_Ka_earth = m_model_earth.getKa();
+  // m_Kd_earth = m_model_earth.getKd();
+  // m_Ks_earth = m_model_earth.getKs();
 
 
 
@@ -239,24 +241,23 @@ void OpenGLWindow::paintGL() {
   glUniform1i(mappingModeLoc, 3);
 
   glUniform4fv(lightDirLoc, 1, &m_lightDir.x);
-  glUniform4fv(IaLoc, 1, &m_Ia_moon.x);
-  glUniform4fv(IdLoc, 1, &m_Id_moon.x);
-  glUniform4fv(IsLoc, 1, &m_Is_moon.x);
+  glUniform4fv(IaLoc, 1, &m_Ia.x);
+  glUniform4fv(IdLoc, 1, &m_Id.x);
+  glUniform4fv(IsLoc, 1, &m_Is.x);
 
-  glUniform4fv(IaLoc, 1, &m_Ia_earth.x);
-  glUniform4fv(IdLoc, 1, &m_Id_earth.x);
-  glUniform4fv(IsLoc, 1, &m_Is_earth.x);
+  // glUniform4fv(IaLoc, 1, &m_Ia_earth.x);
+  // glUniform4fv(IdLoc, 1, &m_Id_earth.x);
+  // glUniform4fv(IsLoc, 1, &m_Is_earth.x);
 
   float mat[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   glUniform1f(shininessLoc, 5000.0f);
   glUniform4fv(KaLoc, 1, mat);
   glUniform4fv(KdLoc, 1, mat);
   glUniform4fv(KsLoc, 1, mat);
-
   
   m_modelMatrix_moon = glm::mat4(1.0);
   m_modelMatrix_moon = glm::translate(m_modelMatrix_moon, glm::vec3(1.0f, 1.0f, 0.0f));
-  m_modelMatrix_moon = glm::rotate(m_modelMatrix_moon, glm::radians(0.005f), glm::vec3(0, 0, 1));
+  m_modelMatrix_moon = glm::rotate(m_modelMatrix_moon, glm::radians(0.1f*rotationTime), glm::vec3(0, 1, 0));
   m_modelMatrix_moon = glm::scale(m_modelMatrix_moon, glm::vec3(0.2f));
   glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &m_modelMatrix_moon[0][0]);
 
@@ -266,10 +267,19 @@ void OpenGLWindow::paintGL() {
 
   m_model_moon.render(m_trianglesToDraw_moon);
 
+  glUniform1f(shininessLoc, m_shininess);
+ 
+  glUniform4fv(KaLoc, 1, &m_Ka.x);
+  glUniform4fv(KdLoc, 1, &m_Kd.x);
+  glUniform4fv(KsLoc, 1, &m_Ks.x);
+
+  // glUniform4fv(KaLoc, 1, &m_Ka_earth.x);
+  // glUniform4fv(KdLoc, 1, &m_Kd_earth.x);
+  // glUniform4fv(KsLoc, 1, &m_Ks_earth.x);
 
   m_modelMatrix_earth = glm::mat4(1.0);
   m_modelMatrix_earth = glm::translate(m_modelMatrix_earth, glm::vec3(-0.5f, 0.0f, 0.0f));
-  m_modelMatrix_earth = glm::rotate(m_modelMatrix_earth, glm::radians(0.005f), glm::vec3(0, 0, 1));
+  m_modelMatrix_earth = glm::rotate(m_modelMatrix_earth, glm::radians(0.1f*rotationTime), glm::vec3(0, 1, -0.1f));
   m_modelMatrix_earth = glm::scale(m_modelMatrix_earth, glm::vec3(1.4f));
   glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &m_modelMatrix_earth[0][0]);
 
@@ -278,19 +288,6 @@ void OpenGLWindow::paintGL() {
   glUniformMatrix3fv(normalMatrixLoc, 1, GL_FALSE, &normalMatrix[0][0]);
 
   m_model_earth.render(m_trianglesToDraw_earth);
-  
-
-  glUniform1f(shininessLoc, m_shininess);
-  glUniform1f(shininessLoc, m_shininess);
-
-  glUniform4fv(KaLoc, 1, &m_Ka_moon.x);
-  glUniform4fv(KdLoc, 1, &m_Kd_moon.x);
-  glUniform4fv(KsLoc, 1, &m_Ks_moon.x);
-
-  glUniform4fv(KaLoc, 1, &m_Ka_earth.x);
-  glUniform4fv(KdLoc, 1, &m_Kd_earth.x);
-  glUniform4fv(KsLoc, 1, &m_Ks_earth.x);
-
 
   // // Draw yellow bunny
   // model = glm::mat4(1.0);
@@ -353,6 +350,7 @@ void OpenGLWindow::terminateGL() {
 }
 
 void OpenGLWindow::update() {
+  rotationTime++;
   const float deltaTime{static_cast<float>(getDeltaTime())};
 
   // Update LookAt camera

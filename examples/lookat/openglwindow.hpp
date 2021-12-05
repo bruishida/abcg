@@ -5,15 +5,8 @@
 
 #include "abcg.hpp"
 #include "camera.hpp"
+#include "model.hpp"
 #include "ground.hpp"
-
-struct Vertex {
-  glm::vec3 position;
-
-  bool operator==(const Vertex& other) const {
-    return position == other.position;
-  }
-};
 
 class OpenGLWindow : public abcg::OpenGLWindow {
  protected:
@@ -43,6 +36,27 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   std::vector<Vertex> m_vertices;
   std::vector<GLuint> m_indices;
+
+  std::vector<Vertex> m_vertices2;
+  std::vector<GLuint> m_indices2;
+
+  glm::vec4 m_lightDir{0.5f, 0.0f, 0.0f, 0.0f};
+
+
+  Model m_model;
+  int m_trianglesToDraw{};
+  glm::mat4 m_modelMatrix{1.0f};
+
+  glm::mat4 m_viewMatrix{1.0f};
+  glm::mat4 m_projMatrix{1.0f};
+  glm::vec4 m_Ia{1.0f};
+  glm::vec4 m_Id{1.0f};
+  glm::vec4 m_Is{1.0f, 0.861f, 0.591f, 1.0f};
+  //glm::vec4 m_Is{1.0f};
+  glm::vec4 m_Ka{};
+  glm::vec4 m_Kd{};
+  glm::vec4 m_Ks{};
+  float m_shininess{};
 
   void loadModelFromFile(std::string_view path);
   void update();

@@ -8,6 +8,9 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtx/hash.hpp>
 #include <unordered_map>
+#include <glm/gtc/matrix_inverse.hpp>
+
+#include "imfilebrowser.h"
 
 // Explicit specialization of std::hash for Vertex
 namespace std {
@@ -62,13 +65,25 @@ void OpenGLWindow::initializeGL() {
   abcg::glEnable(GL_DEPTH_TEST);
 
   // Create program
-  m_program = createProgramFromFile(getAssetsPath() + "lookat.vert",
-                                    getAssetsPath() + "lookat.frag");
+  m_program = createProgramFromFile(getAssetsPath() + "shaders/texture.vert",
+                                    getAssetsPath() + "shaders/texture.frag");
 
   m_ground.initializeGL(m_program);
 
   // Load model
-  loadModelFromFile(getAssetsPath() + "Kitchen.obj");
+  loadModelFromFile(getAssetsPath() + "moon.obj");
+  m_model.terminateGL();
+
+  m_model.loadDiffuseTexture(getAssetsPath() + "maps/moon_diffuse.png");
+  m_model.loadNormalTexture(getAssetsPath() + "maps/moon_normal.png");
+  m_model.loadObj(getAssetsPath() + "moon.obj");
+  m_model.setupVAO(m_program);
+  m_trianglesToDraw = m_model.getNumTriangles();
+
+  m_Ka = m_model.getKa();
+  m_Kd = m_model.getKd();
+  m_Ks = m_model.getKs();
+  m_shininess = 13.0f;
 
   // Generate VBO
   abcg::glGenBuffers(1, &m_VBO);
@@ -180,6 +195,19 @@ void OpenGLWindow::paintGL() {
       abcg::glGetUniformLocation(m_program, "modelMatrix")};
   const GLint colorLoc{abcg::glGetUniformLocation(m_program, "color")};
 
+  GLint normalMatrixLoc{glGetUniformLocation(m_program, "normalMatrix")};
+  GLint lightDirLoc{glGetUniformLocation(m_program, "lightDirWorldSpace")};
+  GLint shininessLoc{glGetUniformLocation(m_program, "shininess")};
+  GLint IaLoc{glGetUniformLocation(m_program, "Ia")};
+  GLint IdLoc{glGetUniformLocation(m_program, "Id")};
+  GLint IsLoc{glGetUniformLocation(m_program, "Is")};
+  GLint KaLoc{glGetUniformLocation(m_program, "Ka")};
+  GLint KdLoc{glGetUniformLocation(m_program, "Kd")};
+  GLint KsLoc{glGetUniformLocation(m_program, "Ks")};
+  GLint diffuseTexLoc{glGetUniformLocation(m_program, "diffuseTex")};
+  GLint normalTexLoc{glGetUniformLocation(m_program, "normalTex")};
+  GLint mappingModeLoc{glGetUniformLocation(m_program, "mappingMode")};
+
   // Set uniform variables for viewMatrix and projMatrix
   // These matrices are used for every scene object
   abcg::glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE,
@@ -188,6 +216,23 @@ void OpenGLWindow::paintGL() {
                            &m_camera.m_projMatrix[0][0]);
 
   abcg::glBindVertexArray(m_VAO);
+
+    
+  glUniform1i(diffuseTexLoc, 0);
+  glUniform1i(normalTexLoc, 1);
+  glUniform1i(mappingModeLoc, 3);
+
+  glUniform4fv(lightDirLoc, 1, &m_lightDir.x);
+  glUniform4fv(IaLoc, 1, &m_Ia.x);
+  glUniform4fv(IdLoc, 1, &m_Id.x);
+  glUniform4fv(IsLoc, 1, &m_Is.x);
+
+  float mat[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+  glUniform1f(shininessLoc, 5000.0f);
+  glUniform4fv(KaLoc, 1, mat);
+  glUniform4fv(KdLoc, 1, mat);
+  glUniform4fv(KsLoc, 1, mat);
+
 
   // // Draw white bunny
   glm::mat4 model{1.0f};
@@ -199,6 +244,27 @@ void OpenGLWindow::paintGL() {
   abcg::glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
   abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
                        nullptr);
+
+
+  //
+  m_modelMatrix = glm::mat4(1.0);
+  m_modelMatrix = glm::translate(m_modelMatrix, glm::vec3(1.0f, 1.0f, 0.0f));
+  m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(0.005f), glm::vec3(0, 0, 1));
+  m_modelMatrix = glm::scale(m_modelMatrix, glm::vec3(0.2f));
+  glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &m_modelMatrix[0][0]);
+
+  auto modelViewMatrix{glm::mat3(m_camera.m_viewMatrix * m_modelMatrix)};
+  glm::mat3 normalMatrix{glm::inverseTranspose(modelViewMatrix)};
+  glUniformMatrix3fv(normalMatrixLoc, 1, GL_FALSE, &normalMatrix[0][0]);
+
+  m_model.render(m_trianglesToDraw);
+  
+
+  glUniform1f(shininessLoc, m_shininess);
+  glUniform4fv(KaLoc, 1, &m_Ka.x);
+  glUniform4fv(KdLoc, 1, &m_Kd.x);
+  glUniform4fv(KsLoc, 1, &m_Ks.x);
+
 
   // // Draw yellow bunny
   // model = glm::mat4(1.0);
@@ -238,7 +304,11 @@ void OpenGLWindow::paintGL() {
   abcg::glUseProgram(0);
 }
 
-void OpenGLWindow::paintUI() { abcg::OpenGLWindow::paintUI(); }
+void OpenGLWindow::paintUI() { abcg::OpenGLWindow::paintUI();
+{
+      auto aspect{static_cast<float>(m_viewportWidth) / static_cast<float>(m_viewportHeight)};
+      m_projMatrix = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 5.0f);
+    } }
 
 void OpenGLWindow::resizeGL(int width, int height) {
   m_viewportWidth = width;

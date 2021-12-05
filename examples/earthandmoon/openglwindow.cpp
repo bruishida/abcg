@@ -70,8 +70,6 @@ void OpenGLWindow::initializeGL() {
   m_program = createProgramFromFile(getAssetsPath() + "shaders/texture.vert",
                                     getAssetsPath() + "shaders/texture.frag");
 
-  // m_ground.initializeGL(m_program);
-
   // Load model
   loadModelFromFile(getAssetsPath() + "moon.obj");
   m_model_moon.terminateGL();
@@ -96,12 +94,6 @@ void OpenGLWindow::initializeGL() {
   m_model_earth.loadObj(getAssetsPath() + "planet.obj");
   m_model_earth.setupVAO(m_program);
   m_trianglesToDraw_earth = m_model_earth.getNumTriangles();
-
-  // m_Ka_earth = m_model_earth.getKa();
-  // m_Kd_earth = m_model_earth.getKd();
-  // m_Ks_earth = m_model_earth.getKs();
-
-
 
   // Generate VBO
   abcg::glGenBuffers(1, &m_VBO);
@@ -211,7 +203,6 @@ void OpenGLWindow::paintGL() {
       abcg::glGetUniformLocation(m_program, "projMatrix")};
   const GLint modelMatrixLoc{
       abcg::glGetUniformLocation(m_program, "modelMatrix")};
-  const GLint colorLoc{abcg::glGetUniformLocation(m_program, "color")};
 
   GLint normalMatrixLoc{glGetUniformLocation(m_program, "normalMatrix")};
   GLint lightDirLoc{glGetUniformLocation(m_program, "lightDirWorldSpace")};
@@ -245,10 +236,6 @@ void OpenGLWindow::paintGL() {
   glUniform4fv(IdLoc, 1, &m_Id.x);
   glUniform4fv(IsLoc, 1, &m_Is.x);
 
-  // glUniform4fv(IaLoc, 1, &m_Ia_earth.x);
-  // glUniform4fv(IdLoc, 1, &m_Id_earth.x);
-  // glUniform4fv(IsLoc, 1, &m_Is_earth.x);
-
   float mat[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   glUniform1f(shininessLoc, 5000.0f);
   glUniform4fv(KaLoc, 1, mat);
@@ -273,51 +260,13 @@ void OpenGLWindow::paintGL() {
   glUniform4fv(KdLoc, 1, &m_Kd.x);
   glUniform4fv(KsLoc, 1, &m_Ks.x);
 
-  // glUniform4fv(KaLoc, 1, &m_Ka_earth.x);
-  // glUniform4fv(KdLoc, 1, &m_Kd_earth.x);
-  // glUniform4fv(KsLoc, 1, &m_Ks_earth.x);
-
   m_modelMatrix_earth = glm::mat4(1.0);
   m_modelMatrix_earth = glm::translate(m_modelMatrix_earth, glm::vec3(-0.5f, 0.0f, 0.0f));
   m_modelMatrix_earth = glm::rotate(m_modelMatrix_earth, glm::radians(0.1f*rotationTime), glm::vec3(0, 1, -0.1f));
   m_modelMatrix_earth = glm::scale(m_modelMatrix_earth, glm::vec3(1.4f));
   glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &m_modelMatrix_earth[0][0]);
 
-  auto modelViewMatrix_earth{glm::mat3(m_camera.m_viewMatrix * m_modelMatrix_earth)};
-  glm::mat3 normalMatrix_earth{glm::inverseTranspose(modelViewMatrix)};
-  glUniformMatrix3fv(normalMatrixLoc, 1, GL_FALSE, &normalMatrix[0][0]);
-
   m_model_earth.render(m_trianglesToDraw_earth);
-
-  // // Draw yellow bunny
-  // model = glm::mat4(1.0);
-  // model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
-  // model = glm::scale(model, glm::vec3(0.5f));
-
-  // abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
-  // abcg::glUniform4f(colorLoc, 1.0f, 0.8f, 0.0f, 1.0f);
-  // abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
-  //                      nullptr);
-
-  // // Draw blue bunny
-  // model = glm::mat4(1.0);
-  // model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
-  // model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0, 1, 0));
-  // model = glm::scale(model, glm::vec3(0.5f));
-
-  // abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
-  // abcg::glUniform4f(colorLoc, 0.0f, 0.8f, 1.0f, 1.0f);
-  // abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
-  //                      nullptr);
-
-  // Draw red bunny
-  // model = glm::mat4(1.0);
-  // model = glm::scale(model, glm::vec3(0.1f));
-
-  // abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
-  // abcg::glUniform4f(colorLoc, 1.0f, 0.25f, 0.25f, 1.0f);
-  // abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
-  //                      nullptr);
 
   abcg::glBindVertexArray(0);
 

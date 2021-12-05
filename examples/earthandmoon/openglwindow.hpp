@@ -56,12 +56,8 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   glm::vec4 m_Id{1.0f};
   glm::vec4 m_Is{1.0f, 0.861f, 0.591f, 1.0f};
 
-  glm::mat4 m_viewMatrix_moon{1.0f};
   glm::mat4 m_projMatrix{1.0f};
-  //glm::vec4 m_Is{1.0f};
-  // glm::vec4 m_Ka_moon{};
-  // glm::vec4 m_Kd_moon{};
-  // glm::vec4 m_Ks_moon{};
+
   float m_shininess{};
 
 
@@ -69,13 +65,6 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   int m_trianglesToDraw_earth{};
   glm::mat4 m_modelMatrix_earth{1.0f};
 
-  glm::mat4 m_viewMatrix_earth{1.0f};
-  // glm::mat4 m_projMatrix_earth{1.0f};
-  //glm::vec4 m_Is{1.0f};
-  // glm::vec4 m_Ka_earth{};
-  // glm::vec4 m_Kd_earth{};
-  // glm::vec4 m_Ks_earth{};
-  //float m_shininess_earth{};
 
   void loadModelFromFile(std::string_view path);
   void update();
